@@ -1,6 +1,8 @@
 package pl.adamklimko.zerosegandroid.activity;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -100,12 +102,26 @@ public class MessageActivity extends AppCompatActivity {
 //            showProgress(false);
 
             if (success) {
-                mMessageView.setText("");
+                showMessageSentDialog();
 //                mPasswordView.setError("Successful login");
 //                mPasswordView.requestFocus();
             } else {
                 mMessageView.setError("Cannot send message");
             }
+        }
+
+        private void showMessageSentDialog() {
+            AlertDialog alertDialog = new AlertDialog.Builder(MessageActivity.this).create();
+            alertDialog.setTitle("Success");
+            alertDialog.setMessage("Message has been sent");
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            mMessageView.setText("");
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
         }
 
         @Override
