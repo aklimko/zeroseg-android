@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import pl.adamklimko.zerosegandroid.R;
+import pl.adamklimko.zerosegandroid.UserToken;
 import pl.adamklimko.zerosegandroid.model.Token;
 import pl.adamklimko.zerosegandroid.model.User;
 import pl.adamklimko.zerosegandroid.rest.RetrofitClient;
@@ -40,6 +41,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -317,31 +319,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-            Call<Token> tokenCall = zerosegService.login(user);
-            tokenCall.enqueue(new Callback<Token>() {
-                @Override
-                public void onResponse(Call<Token> call, Response<Token> response) {
-                    if (response.isSuccessful()) {
-                        if (response.code() == 200) {
-                            Log.e("LOGIN", "Successful login");
-
-                        } else if (response.code() == 403) {
-                            Log.e("LOGIN", "Bad credentials");
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Token> call, Throwable t) {
-                    Log.e("LOGIN", "Couldn't connect to server.");
-                }
-            });
-
-            // TODO: register the new account here.
+            final Call<Token> tokenCall = zerosegService.login(user);
+            final Response<Token> response;
             try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                response = tokenCall.execute();
+            } catch (IOException e) {
+                return false;
+            }
+            if (!response.isSuccessful()) {
+                return false;
+            }
+            if (response.code() == 200) {
+                final String token = response.body().getToken();
+                if (token == null) {
+                    return false;
+                }
+                Log.i("LOGIN", "Successful login");
+                UserToken.setUserToken(token);
+                return true;
+            } else if (response.code() == 403) {
+                Log.e("LOGIN", "Bad credentials");
             }
             return false;
         }
@@ -352,7 +349,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                finish();
+                Intent messageActivity = new Intent();
+                messageActivity.setClass(getApplicationContext(), MessageActivity.class);
+                startActivity(messageActivity);
+//                mPasswordView.setError("Successful login");
+//                mPasswordView.requestFocus();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
