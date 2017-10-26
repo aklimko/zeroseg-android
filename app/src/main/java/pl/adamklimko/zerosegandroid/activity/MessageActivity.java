@@ -10,7 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import pl.adamklimko.zerosegandroid.R;
-import pl.adamklimko.zerosegandroid.UserToken;
+import pl.adamklimko.zerosegandroid.rest.UserToken;
 import pl.adamklimko.zerosegandroid.model.Message;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
 import pl.adamklimko.zerosegandroid.rest.ZerosegService;
@@ -100,6 +100,7 @@ public class MessageActivity extends AppCompatActivity {
 //            showProgress(false);
 
             if (success) {
+                mMessageView.setText("");
 //                mPasswordView.setError("Successful login");
 //                mPasswordView.requestFocus();
             } else {

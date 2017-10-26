@@ -1,4 +1,4 @@
-package pl.adamklimko.zerosegandroid;
+package pl.adamklimko.zerosegandroid.rest;
 
 public class UserToken {
     private static String token;

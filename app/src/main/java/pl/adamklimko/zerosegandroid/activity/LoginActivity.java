@@ -31,15 +31,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import pl.adamklimko.zerosegandroid.R;
-import pl.adamklimko.zerosegandroid.UserToken;
+import pl.adamklimko.zerosegandroid.rest.UserToken;
 import pl.adamklimko.zerosegandroid.model.Token;
 import pl.adamklimko.zerosegandroid.model.User;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
-import pl.adamklimko.zerosegandroid.rest.RetrofitClient;
 import pl.adamklimko.zerosegandroid.rest.ZerosegService;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 import java.io.IOException;
 import java.util.ArrayList;
