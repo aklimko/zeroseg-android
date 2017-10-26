@@ -34,10 +34,10 @@ import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.UserToken;
 import pl.adamklimko.zerosegandroid.model.Token;
 import pl.adamklimko.zerosegandroid.model.User;
+import pl.adamklimko.zerosegandroid.rest.ApiClient;
 import pl.adamklimko.zerosegandroid.rest.RetrofitClient;
 import pl.adamklimko.zerosegandroid.rest.ZerosegService;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -74,7 +74,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private Retrofit retrofit;
     private ZerosegService zerosegService;
     private Token token;
 
@@ -83,8 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        retrofit = RetrofitClient.getClient();
-        zerosegService = retrofit.create(ZerosegService.class);
+        zerosegService = ApiClient.createService(ZerosegService.class);
         // Set up the login form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -201,7 +199,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress(true);
             User user = new User(username, password);
-            mAuthTask = new UserLoginTask(user, zerosegService);
+            mAuthTask = new UserLoginTask(user);
             mAuthTask.execute((Void) null);
         }
     }
@@ -308,12 +306,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final User user;
-        private final ZerosegService zerosegService;
 
-
-        UserLoginTask(User user, ZerosegService zerosegService) {
+        UserLoginTask(User user) {
             this.user = user;
-            this.zerosegService = zerosegService;
         }
 
         @Override
@@ -335,7 +330,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return false;
                 }
                 Log.i("LOGIN", "Successful login");
-                UserToken.setUserToken(token);
+                UserToken.setToken(token);
                 return true;
             } else if (response.code() == 403) {
                 Log.e("LOGIN", "Bad credentials");

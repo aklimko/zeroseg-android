@@ -1,13 +1,13 @@
 package pl.adamklimko.zerosegandroid;
 
 public class UserToken {
-    private static String userToken;
+    private static String token;
 
-    public static String getUserToken() {
-        return userToken;
+    public static String getToken() {
+        return token;
     }
 
-    public static void setUserToken(String userToken) {
-        UserToken.userToken = userToken;
+    public static void setToken(String token) {
+        UserToken.token = token;
     }
 }

@@ -5,12 +5,13 @@ import pl.adamklimko.zerosegandroid.model.Token;
 import pl.adamklimko.zerosegandroid.model.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 
 public interface ZerosegService {
     @POST("messages")
-    Call<Message> postMessage();
+    Call<Message> postMessage(@Body Message message);
 
     @POST("login")
     Call<Token> login(@Body User user);

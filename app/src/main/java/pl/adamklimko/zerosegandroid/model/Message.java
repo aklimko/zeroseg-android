@@ -1,15 +1,13 @@
 package pl.adamklimko.zerosegandroid.model;
 
 public class Message {
-    private int id;
     private String text;
 
-    public int getId() {
-        return id;
+    public Message() {
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Message(String text) {
+        this.text = text;
     }
 
     public String getText() {
