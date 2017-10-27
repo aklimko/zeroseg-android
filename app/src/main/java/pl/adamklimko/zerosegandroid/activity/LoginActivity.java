@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -31,7 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import pl.adamklimko.zerosegandroid.R;
-import pl.adamklimko.zerosegandroid.rest.UserToken;
+import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.model.Token;
 import pl.adamklimko.zerosegandroid.model.User;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
@@ -79,6 +80,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Setting SharedPreferences
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(UserSession.PREFERENCES_NAME, MODE_PRIVATE);
+        UserSession.setPreferences(preferences);
+
+        if (UserSession.hasToken()) {
+            Intent messageActivity = new Intent();
+            messageActivity.setClass(getApplicationContext(), MessageActivity.class);
+            startActivity(messageActivity);
+            finish();
+            return;
+        }
 
         zerosegService = ApiClient.createService(ZerosegService.class);
         // Set up the login form.
@@ -323,12 +336,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
             if (response.code() == 200) {
-                final String token = response.body().getToken();
-                if (token == null) {
+                final Token token = response.body();
+                if (token.getToken() == null) {
                     return false;
                 }
                 Log.i("LOGIN", "Successful login");
-                UserToken.setToken(token);
+                UserSession.setTokenInPreferences(token);
                 return true;
             } else if (response.code() == 403) {
                 Log.e("LOGIN", "Bad credentials");

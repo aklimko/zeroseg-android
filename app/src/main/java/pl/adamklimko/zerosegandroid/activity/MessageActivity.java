@@ -12,7 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import pl.adamklimko.zerosegandroid.R;
-import pl.adamklimko.zerosegandroid.rest.UserToken;
+import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.model.Message;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
 import pl.adamklimko.zerosegandroid.rest.ZerosegService;
@@ -36,7 +36,7 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
 
         // TODO: make singleton class for zerosegService
-        zerosegService = ApiClient.createService(ZerosegService.class, UserToken.getToken());
+        zerosegService = ApiClient.createService(ZerosegService.class, UserSession.getToken());
 
         mMessageView = (EditText) findViewById(R.id.message);
         mSendButton = (Button) findViewById(R.id.message_send_button);
