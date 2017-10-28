@@ -7,7 +7,12 @@ import pl.adamklimko.zerosegandroid.model.Token;
 
 public class UserSession {
     private static SharedPreferences preferences;
-    public static String PREFERENCES_NAME = "ZerosegPreferences";
+
+    public static final String PREFERENCES_NAME = "Zeroseg Preferences";
+    public static final String PREFERENCES_TOKEN = "Token";
+    public static final String PREFERENCES_EXPIRATION = "Expiration Date";
+
+    private static boolean firstStarted = true;
 
 
     public static SharedPreferences getPreferences() {
@@ -20,8 +25,8 @@ public class UserSession {
 
     public static void setTokenInPreferences(Token token) {
         Editor editor = preferences.edit();
-        editor.putString("Token", token.getToken());
-        editor.putString("Expiration Date", token.getExpirationDate());
+        editor.putString(PREFERENCES_TOKEN, token.getToken());
+        editor.putString(PREFERENCES_EXPIRATION, token.getExpirationDate());
         editor.apply();
     }
 
@@ -31,5 +36,19 @@ public class UserSession {
 
     public static boolean hasToken() {
          return !TextUtils.isEmpty(preferences.getString("Token", ""));
+    }
+
+    public static void resetToken() {
+        Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
+    public static boolean isFirstStarted() {
+        return firstStarted;
+    }
+
+    public static void setFirstStarted(boolean firstStarted) {
+        UserSession.firstStarted = firstStarted;
     }
 }

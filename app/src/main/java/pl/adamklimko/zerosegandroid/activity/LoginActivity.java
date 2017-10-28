@@ -66,6 +66,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+
+    public static boolean FIRST_STARTED = true;
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -74,7 +76,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private ZerosegService zerosegService;
-    private Token token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +83,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
 
         // Setting SharedPreferences
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences(UserSession.PREFERENCES_NAME, MODE_PRIVATE);
-        UserSession.setPreferences(preferences);
+        // TODO: make this work only first time, not when logging again for new token
+        if (UserSession.isFirstStarted()) {
+            SharedPreferences preferences = getApplicationContext().getSharedPreferences(UserSession.PREFERENCES_NAME, MODE_PRIVATE);
+            UserSession.setPreferences(preferences);
+        }
 
         if (UserSession.hasToken()) {
+            UserSession.setFirstStarted(false);
             Intent messageActivity = new Intent();
             messageActivity.setClass(getApplicationContext(), MessageActivity.class);
             startActivity(messageActivity);
@@ -93,7 +98,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return;
         }
 
-        zerosegService = ApiClient.createService(ZerosegService.class);
+        zerosegService = ApiClient.createService(ZerosegService.class, this);
         // Set up the login form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();

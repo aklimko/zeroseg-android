@@ -1,12 +1,13 @@
 package pl.adamklimko.zerosegandroid.rest;
 
+import android.content.Context;
 import android.text.TextUtils;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    public static String API_URL = "http://api.adamklimko.pl/raspberry/";
+    public static final String API_URL = "http://api.adamklimko.pl/raspberry/";
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
@@ -17,19 +18,22 @@ public class ApiClient {
 
     private static Retrofit retrofit = builder.build();
 
-    public static <S> S createService(Class<S> serviceClass) {
-        return createService(serviceClass, null);
+    public static <S> S createService(Class<S> serviceClass, final Context context) {
+        return createService(serviceClass, null, context);
     }
 
-    public static <S> S createService(
-            Class<S> serviceClass, final String authToken) {
+    public static <S> S createService(Class<S> serviceClass, final String authToken, final Context context) {
         if (!TextUtils.isEmpty(authToken)) {
-            AuthenticationInterceptor interceptor =
-                    new AuthenticationInterceptor(authToken);
+            AuthenticationInterceptor interceptor = new AuthenticationInterceptor(authToken, context);
 
-            if (!httpClient.interceptors().contains(interceptor)) {
+            if (httpClient.interceptors().isEmpty()) {
                 httpClient.addInterceptor(interceptor);
-
+                builder.client(httpClient.build());
+                retrofit = builder.build();
+            }
+        } else {
+            if (!httpClient.interceptors().isEmpty()) {
+                httpClient.interceptors().clear();
                 builder.client(httpClient.build());
                 retrofit = builder.build();
             }

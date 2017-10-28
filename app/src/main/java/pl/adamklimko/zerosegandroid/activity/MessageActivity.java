@@ -36,7 +36,7 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
 
         // TODO: make singleton class for zerosegService
-        zerosegService = ApiClient.createService(ZerosegService.class, UserSession.getToken());
+        zerosegService = ApiClient.createService(ZerosegService.class, UserSession.getToken(), this);
 
         mMessageView = (EditText) findViewById(R.id.message);
         mSendButton = (Button) findViewById(R.id.message_send_button);
