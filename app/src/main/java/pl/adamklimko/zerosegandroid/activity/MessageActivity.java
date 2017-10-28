@@ -16,10 +16,14 @@ import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.model.Message;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
 import pl.adamklimko.zerosegandroid.rest.ZerosegService;
+import pl.adamklimko.zerosegandroid.util.MessageUtils;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -29,11 +33,13 @@ public class MessageActivity extends AppCompatActivity {
     private Button mSendButton;
 
     private ZerosegService zerosegService;
+    private List<Character> polishCharacters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
 
         // TODO: make singleton class for zerosegService
         zerosegService = ApiClient.createService(ZerosegService.class, UserSession.getToken(), this);
@@ -59,6 +65,10 @@ public class MessageActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(text)) {
             mMessageView.setError("Empty message");
             return;
+        }
+
+        if (MessageUtils.containsPolishCharacters(text)) {
+            text = MessageUtils.normalizePolishCharacters(text);
         }
 
         Message message = new Message(text);
