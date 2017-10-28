@@ -103,15 +103,13 @@ public class MessageActivity extends AppCompatActivity {
 
             if (success) {
                 showMessageSentDialog();
-//                mPasswordView.setError("Successful login");
-//                mPasswordView.requestFocus();
             } else {
                 mMessageView.setError("Cannot send message");
             }
         }
 
         private void showMessageSentDialog() {
-            AlertDialog alertDialog = new AlertDialog.Builder(MessageActivity.this).create();
+            final AlertDialog alertDialog = new AlertDialog.Builder(MessageActivity.this).create();
             alertDialog.setTitle("Success");
             alertDialog.setMessage("Message has been sent");
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",

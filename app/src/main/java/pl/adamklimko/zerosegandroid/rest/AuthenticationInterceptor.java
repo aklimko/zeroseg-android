@@ -1,8 +1,14 @@
 package pl.adamklimko.zerosegandroid.rest;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.WindowManager;
+import android.widget.Toast;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -34,10 +40,46 @@ public class AuthenticationInterceptor implements Interceptor {
             UserSession.resetToken();
             final Intent login = new Intent(context, LoginActivity.class);
             login.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(login);
-            ((Activity) context).finish();
+            showTokenExpired(login);
         }
 
         return response;
     }
+
+    private void showTokenExpired(final Intent login) {
+//        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+//        alertDialog.setTitle("Info");
+//        alertDialog.setMessage("Your token expired. Please, log in again.");
+//        alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE, "OK",
+//                new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                        context.startActivity(login);
+//                        ((Activity) context).finish();
+//                    }
+//                });
+//        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+//        alertDialog.show();
+//        Toast.makeText(context, "Token expired.", Toast.LENGTH_LONG).show();
+        new Handler(Looper.getMainLooper()).post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                alertDialog.setTitle("Info");
+                alertDialog.setMessage("Your token expired. Please, log in again.");
+                alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                context.startActivity(login);
+                                ((Activity) context).finish();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
+    }
+
 }
