@@ -33,7 +33,6 @@ public class MessageActivity extends AppCompatActivity {
     private Button mSendButton;
 
     private ZerosegService zerosegService;
-    private List<Character> polishCharacters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
