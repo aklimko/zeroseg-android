@@ -12,6 +12,9 @@ public class MessageUtilsTest {
 
         String textWithout = "siema";
         assertEquals(false, MessageUtils.containsPolishCharacters(textWithout));
+
+        String empty = "";
+        assertEquals(false, MessageUtils.containsPolishCharacters(empty));
     }
 
     @Test
@@ -23,6 +26,9 @@ public class MessageUtilsTest {
         String text = "Ala ma kota.";
         String expected2 = "Ala ma kota.";
         assertEquals(expected2, MessageUtils.normalizePolishCharacters(text));
+
+        String empty = "";
+        assertEquals(empty, MessageUtils.normalizePolishCharacters(empty));
     }
 
 }

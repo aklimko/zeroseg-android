@@ -7,10 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.model.Message;
@@ -39,10 +41,19 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        // TODO: make singleton class for zerosegService
         zerosegService = ApiClient.createServiceWithAuth(ZerosegService.class, this);
 
         mMessageView = (EditText) findViewById(R.id.message);
+        mMessageView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    sendMessage();
+                    return true;
+                }
+                return false;
+            }
+        });
         mSendButton = (Button) findViewById(R.id.message_send_button);
 
         mSendButton.setOnClickListener(new OnClickListener() {
@@ -115,16 +126,17 @@ public class MessageActivity extends AppCompatActivity {
         }
 
         private void showMessageSentDialog() {
-            final AlertDialog alertDialog = new AlertDialog.Builder(MessageActivity.this).create();
-            alertDialog.setTitle("Success");
-            alertDialog.setMessage("Message has been sent.");
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                    new DialogInterface.OnClickListener() {
+            final AlertDialog alertDialog = new AlertDialog.Builder(MessageActivity.this)
+                    .setTitle("Success")
+                    .setMessage("Message has been sent.")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mMessageView.setText("");
                             dialog.dismiss();
                         }
-                    });
+                    })
+                    .create();
             alertDialog.show();
         }
 
