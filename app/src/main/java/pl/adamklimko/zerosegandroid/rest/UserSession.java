@@ -9,8 +9,9 @@ public class UserSession {
     private static SharedPreferences preferences;
 
     public static final String PREFERENCES_NAME = "Zeroseg Preferences";
-    public static final String PREFERENCES_TOKEN = "Token";
-    public static final String PREFERENCES_EXPIRATION = "Expiration Date";
+    private static final String PREFERENCES_USERNAME = "Username";
+    private static final String PREFERENCES_TOKEN = "Token";
+    private static final String PREFERENCES_EXPIRATION = "Expiration Date";
 
     private static boolean firstStarted = true;
 
@@ -30,15 +31,25 @@ public class UserSession {
         editor.apply();
     }
 
+    public static void setUsernameInPreferences(String username) {
+        Editor editor = preferences.edit();
+        editor.putString(PREFERENCES_USERNAME, username);
+        editor.apply();
+    }
+
+    public static String getUsername() {
+        return preferences.getString(PREFERENCES_USERNAME, "");
+    }
+
     public static String getToken() {
-        return preferences.getString("Token", "");
+        return preferences.getString(PREFERENCES_TOKEN, "");
     }
 
     public static boolean hasToken() {
-         return !TextUtils.isEmpty(preferences.getString("Token", ""));
+         return !TextUtils.isEmpty(preferences.getString(PREFERENCES_TOKEN, ""));
     }
 
-    public static void resetToken() {
+    public static void resetSession() {
         Editor editor = preferences.edit();
         editor.clear();
         editor.apply();

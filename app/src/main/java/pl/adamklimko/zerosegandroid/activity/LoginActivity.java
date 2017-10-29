@@ -26,11 +26,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.*;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.model.Token;
@@ -74,7 +70,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
 
         // Setting SharedPreferences
-        // TODO: make this work only first time, not when logging again for new token
         if (UserSession.isFirstStarted()) {
             SharedPreferences preferences = getApplicationContext().getSharedPreferences(UserSession.PREFERENCES_NAME, MODE_PRIVATE);
             UserSession.setPreferences(preferences);
@@ -106,8 +101,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.username_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        Button mSignInButton = (Button) findViewById(R.id.username_sign_in_button);
+        mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -198,12 +193,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
             showProgress(true);
             User user = new User(username, password);
             mAuthTask = new UserLoginTask(user);
@@ -212,7 +203,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -354,16 +344,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Intent messageActivity = new Intent();
-                messageActivity.setClass(getApplicationContext(), MessageActivity.class);
-                startActivity(messageActivity);
-                finish();
-//                mPasswordView.setError("Successful login");
-//                mPasswordView.requestFocus();
+                switchToPostLoginActivity();
             } else {
                 mPasswordView.requestFocus();
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
             }
+        }
+
+        private void switchToPostLoginActivity() {
+            informAboutSuccessfulLogin();
+            startPostLoginActivity();
+            closeLoginActivity();
+        }
+
+        private void informAboutSuccessfulLogin() {
+            Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_SHORT).show();
+        }
+
+        private void startPostLoginActivity() {
+            Intent messageActivity = new Intent();
+            messageActivity.setClass(getApplicationContext(), MessageActivity.class);
+            startActivity(messageActivity);
+        }
+
+        private void closeLoginActivity() {
+            finish();
         }
 
         @Override
@@ -373,4 +378,3 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 }
-
