@@ -67,8 +67,8 @@ public class AuthenticationInterceptor implements Interceptor {
             public void run()
             {
                 final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                alertDialog.setTitle("Info");
-                alertDialog.setMessage("Your token expired. Please, log in again.");
+                alertDialog.setTitle("Token expired");
+                alertDialog.setMessage("Your token expired. Please log in.");
                 alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {

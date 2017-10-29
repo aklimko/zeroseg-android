@@ -18,13 +18,18 @@ public class ApiClient {
 
     private static Retrofit retrofit = builder.build();
 
-    public static <S> S createService(Class<S> serviceClass, final Context context) {
-        return createService(serviceClass, null, context);
+    public static <S> S createService(Class<S> serviceClass) {
+        if (!httpClient.interceptors().isEmpty()) {
+            httpClient.interceptors().clear();
+            builder.client(httpClient.build());
+            retrofit = builder.build();
+        }
+        return retrofit.create(serviceClass);
     }
 
-    public static <S> S createService(Class<S> serviceClass, final String authToken, final Context context) {
-        if (!TextUtils.isEmpty(authToken)) {
-            AuthenticationInterceptor interceptor = new AuthenticationInterceptor(authToken, context);
+    public static <S> S createServiceWithAuth(Class<S> serviceClass, final Context context) {
+        if (UserSession.hasToken()) {
+            AuthenticationInterceptor interceptor = new AuthenticationInterceptor(UserSession.getToken(), context);
 
             if (httpClient.interceptors().isEmpty()) {
                 httpClient.addInterceptor(interceptor);

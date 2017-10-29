@@ -57,17 +57,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-
-    public static boolean FIRST_STARTED = true;
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -98,7 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return;
         }
 
-        zerosegService = ApiClient.createService(ZerosegService.class, this);
+        zerosegService = ApiClient.createService(ZerosegService.class);
         // Set up the login form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
         populateAutoComplete();
@@ -342,6 +333,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
             if (response.code() == 200) {
                 final Token token = response.body();
+                if (token == null) {
+                    return false;
+                }
                 if (token.getToken() == null) {
                     return false;
                 }

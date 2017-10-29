@@ -19,6 +19,10 @@ public class MessageUtilsTest {
         String textPolish = "Właśnie piszę ten test";
         String expected = "Wlasnie pisze ten test";
         assertEquals(expected, MessageUtils.normalizePolishCharacters(textPolish));
+
+        String text = "Ala ma kota.";
+        String expected2 = "Ala ma kota.";
+        assertEquals(expected2, MessageUtils.normalizePolishCharacters(text));
     }
 
 }

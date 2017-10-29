@@ -39,9 +39,8 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-
         // TODO: make singleton class for zerosegService
-        zerosegService = ApiClient.createService(ZerosegService.class, UserSession.getToken(), this);
+        zerosegService = ApiClient.createServiceWithAuth(ZerosegService.class, this);
 
         mMessageView = (EditText) findViewById(R.id.message);
         mSendButton = (Button) findViewById(R.id.message_send_button);
@@ -112,15 +111,13 @@ public class MessageActivity extends AppCompatActivity {
 
             if (success) {
                 showMessageSentDialog();
-            } else {
-                mMessageView.setError("Cannot send message");
             }
         }
 
         private void showMessageSentDialog() {
             final AlertDialog alertDialog = new AlertDialog.Builder(MessageActivity.this).create();
             alertDialog.setTitle("Success");
-            alertDialog.setMessage("Message has been sent");
+            alertDialog.setMessage("Message has been sent.");
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
