@@ -8,7 +8,7 @@
               android:paddingLeft="@dimen/activity_horizontal_margin"
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
-              tools:context="pl.adamklimko.zerosegandroid.activity.LoginActivity">
+              tools:mContext="pl.adamklimko.zerosegandroid.activity.LoginActivity">
 
     <!-- Login progress -->
     <ProgressBar
@@ -59,7 +59,7 @@
                         android:imeOptions="actionUnspecified"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                />
+                        android:text="AdamExuSKlimkoZeroseg2017"/>
 
             </android.support.design.widget.TextInputLayout>
 

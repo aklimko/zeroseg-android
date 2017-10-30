@@ -6,15 +6,15 @@ import android.text.TextUtils;
 import pl.adamklimko.zerosegandroid.model.Token;
 
 public class UserSession {
+    
     private static SharedPreferences preferences;
 
-    public static final String PREFERENCES_NAME = "Zeroseg Preferences";
+    public static final String PREFERENCES = "Zeroseg Preferences";
     private static final String PREFERENCES_USERNAME = "Username";
     private static final String PREFERENCES_TOKEN = "Token";
     private static final String PREFERENCES_EXPIRATION = "Expiration Date";
 
     private static boolean firstStarted = true;
-
 
     public static SharedPreferences getPreferences() {
         return preferences;

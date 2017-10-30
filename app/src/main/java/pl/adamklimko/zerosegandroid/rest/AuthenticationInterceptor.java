@@ -1,27 +1,17 @@
 package pl.adamklimko.zerosegandroid.rest;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import pl.adamklimko.zerosegandroid.activity.LoginActivity;
 
 import java.io.IOException;
 
 public class AuthenticationInterceptor implements Interceptor {
 
     private String authToken;
-    private Context context;
 
-    public AuthenticationInterceptor(String token, Context context) {
+    public AuthenticationInterceptor(String token) {
         this.authToken = token;
-        this.context = context;
     }
 
     @Override
@@ -31,39 +21,6 @@ public class AuthenticationInterceptor implements Interceptor {
         Request.Builder builder = original.newBuilder()
                 .header("Authorization", authToken);
 
-        Request request = builder.build();
-        Response response = chain.proceed(request);
-
-        if (response.code() == 401 || response.code() == 403) {
-            UserSession.resetSession();
-            final Intent login = new Intent(context, LoginActivity.class);
-            login.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            showTokenExpired(login);
-        }
-
-        return response;
+        return chain.proceed(builder.build());
     }
-
-    private void showTokenExpired(final Intent login) {
-        new Handler(Looper.getMainLooper()).post(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-                alertDialog.setTitle("Token expired");
-                alertDialog.setMessage("Your token expired. Please log in.");
-                alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                context.startActivity(login);
-                                ((Activity) context).finish();
-                            }
-                        });
-                alertDialog.show();
-            }
-        });
-    }
-
 }

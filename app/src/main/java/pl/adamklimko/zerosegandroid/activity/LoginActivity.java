@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import pl.adamklimko.zerosegandroid.R;
+import pl.adamklimko.zerosegandroid.exception.NoNetworkConnectedException;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.model.Token;
 import pl.adamklimko.zerosegandroid.model.User;
@@ -37,6 +38,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Setting SharedPreferences
         if (UserSession.isFirstStarted()) {
-            SharedPreferences preferences = getApplicationContext().getSharedPreferences(UserSession.PREFERENCES_NAME, MODE_PRIVATE);
+            SharedPreferences preferences = getApplicationContext().getSharedPreferences(UserSession.PREFERENCES, MODE_PRIVATE);
             UserSession.setPreferences(preferences);
         }
 
@@ -84,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return;
         }
 
-        zerosegService = ApiClient.createService(ZerosegService.class);
+        zerosegService = ApiClient.createService(ZerosegService.class, getApplicationContext());
         // Set up the login form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
         populateAutoComplete();
@@ -303,6 +305,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final User user;
+        private boolean noNetworkConnection = false;
+        private boolean noInternetConnection = false;
 
         UserLoginTask(User user) {
             this.user = user;
@@ -313,8 +317,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
             final Call<Token> tokenCall = zerosegService.login(user);
             final Response<Token> response;
+            // FIXME: this shit is fucked up
             try {
                 response = tokenCall.execute();
+            } catch (NoNetworkConnectedException e) {
+                noNetworkConnection = true;
+                return false;
+            } catch (SocketTimeoutException e) {
+                noInternetConnection = true;
+                return false;
             } catch (IOException e) {
                 return false;
             }
@@ -343,6 +354,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
+            if (noNetworkConnection) {
+                Toast.makeText(getApplicationContext(), "No network connection", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (noInternetConnection) {
+                Toast.makeText(getApplicationContext(), "Cannot connect to a server", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (success) {
                 switchToPostLoginActivity();
             } else {

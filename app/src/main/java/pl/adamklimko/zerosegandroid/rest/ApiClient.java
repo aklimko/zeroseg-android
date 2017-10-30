@@ -1,15 +1,25 @@
 package pl.adamklimko.zerosegandroid.rest;
 
 import android.content.Context;
-import android.text.TextUtils;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiClient {
-    public static final String API_URL = "http://api.adamklimko.pl/raspberry/";
+import java.util.concurrent.TimeUnit;
 
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+public class ApiClient {
+    private static final String API_URL = "http://api.adamklimko.pl/raspberry/";
+    private static final int TIMEOUT = 5;
+
+    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS);
+
+    private static OkHttpClient.Builder httpClientAuth = new OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS);
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
@@ -18,32 +28,21 @@ public class ApiClient {
 
     private static Retrofit retrofit = builder.build();
 
-    public static <S> S createService(Class<S> serviceClass) {
-        if (!httpClient.interceptors().isEmpty()) {
-            httpClient.interceptors().clear();
-            builder.client(httpClient.build());
-            retrofit = builder.build();
-        }
+    // TODO: write another interceptor for network check and rewrite this shit
+    public static <S> S createService(Class<S> serviceClass, Context context) {
+        httpClient.addNetworkInterceptor(new NetworkInterceptor(context));
+        builder.client(httpClient.build());
+        retrofit = builder.build();
         return retrofit.create(serviceClass);
     }
 
     public static <S> S createServiceWithAuth(Class<S> serviceClass, final Context context) {
         if (UserSession.hasToken()) {
-            AuthenticationInterceptor interceptor = new AuthenticationInterceptor(UserSession.getToken(), context);
-
-            if (httpClient.interceptors().isEmpty()) {
-                httpClient.addInterceptor(interceptor);
-                builder.client(httpClient.build());
-                retrofit = builder.build();
-            }
-        } else {
-            if (!httpClient.interceptors().isEmpty()) {
-                httpClient.interceptors().clear();
-                builder.client(httpClient.build());
-                retrofit = builder.build();
-            }
+            httpClientAuth.addInterceptor(new AuthenticationInterceptor(UserSession.getToken()));
+            httpClientAuth.addNetworkInterceptor(new NetworkInterceptor(context));
+            builder.client(httpClientAuth.build());
+            retrofit = builder.build();
         }
-
         return retrofit.create(serviceClass);
     }
 }

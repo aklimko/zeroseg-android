@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="pl.adamklimko.zerosegandroid.activity.MessageActivity" tools:layout_editor_absoluteY="81dp"
+        tools:mContext="pl.adamklimko.zerosegandroid.activity.MessageActivity" tools:layout_editor_absoluteY="81dp"
         tools:layout_editor_absoluteX="0dp">
 
     <Button
@@ -18,11 +18,12 @@
             android:layout_marginTop="140dp" app:layout_constraintHorizontal_bias="0.503"
             android:layout_marginStart="8dp" android:layout_marginEnd="8dp"/>
     <android.support.design.widget.TextInputLayout
-            android:layout_width="320dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp" app:layout_constraintRight_toRightOf="parent"
             android:layout_marginLeft="8dp" app:layout_constraintLeft_toLeftOf="parent"
-            android:id="@+id/message_layout" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="30dp">
+            android:id="@+id/message_layout" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="30dp"
+            android:layout_marginStart="8dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent">
 
         <EditText
                 android:layout_width="match_parent"
