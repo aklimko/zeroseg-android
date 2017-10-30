@@ -371,12 +371,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private void switchToPostLoginActivity() {
             informAboutSuccessfulLogin();
+            saveUsername();
             startPostLoginActivity();
             closeLoginActivity();
         }
 
         private void informAboutSuccessfulLogin() {
             Toast.makeText(getApplicationContext(), "Logged in", Toast.LENGTH_SHORT).show();
+        }
+
+        private void saveUsername() {
+            UserSession.setUsernameInPreferences(user.getUsername());
         }
 
         private void startPostLoginActivity() {

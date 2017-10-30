@@ -28,7 +28,7 @@
         <activity android:name=".activity.MessageActivity">
         </activity>
         <activity
-                android:name=".activity.DrawerActivity"
+                android:name=".activity.DrawerStandardActivity"
                 android:label="@string/title_activity_drawer"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>

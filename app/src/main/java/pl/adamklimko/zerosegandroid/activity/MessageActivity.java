@@ -27,7 +27,7 @@ import retrofit2.Response;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
-public class MessageActivity extends AppCompatActivity {
+public class MessageActivity extends DrawerActivity {
 
     private MessageTask mMessageTask;
 
