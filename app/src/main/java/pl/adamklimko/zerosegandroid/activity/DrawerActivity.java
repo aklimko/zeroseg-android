@@ -1,5 +1,6 @@
 package pl.adamklimko.zerosegandroid.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -18,8 +19,8 @@ import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 
 public abstract class DrawerActivity extends AppCompatActivity implements MenuItem.OnMenuItemClickListener {
-    private FrameLayout view_stub; //This is the framelayout to keep your content view
-    private NavigationView navigation_view; // The new navigation view from Android Design Library. Can inflate menu resources. Easy
+    private FrameLayout viewStub; //This is the framelayout to keep your content view
+    private NavigationView navigationView; // The new navigation view from Android Design Library. Can inflate menu resources. Easy
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ImageView mProfilePicture;
@@ -30,24 +31,24 @@ public abstract class DrawerActivity extends AppCompatActivity implements MenuIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.drawer_layout);// The base layout that contains your navigation drawer.
-        view_stub = (FrameLayout) findViewById(R.id.view_stub);
-        navigation_view = (NavigationView) findViewById(R.id.navigation_view);
+        viewStub = (FrameLayout) findViewById(R.id.view_stub);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        navigationView.setCheckedItem(0);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mProfilePicture = (ImageView) findViewById(R.id.header_image);
 
-        View v = navigation_view.getHeaderView(0);
-        TextView username = v.findViewById(R.id.header_username);
-        username.setText(UserSession.getUsername());
+        View v = navigationView.getHeaderView(0);
+        mUsername = v.findViewById(R.id.header_username);
+        mUsername.setText(UserSession.getUsername());
 
-        mUsername = (TextView) findViewById(R.id.header_username);
-
+        // TODO: show profile picture
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        drawerMenu = navigation_view.getMenu();
+        drawerMenu = navigationView.getMenu();
         for(int i = 0; i < drawerMenu.size(); i++) {
             drawerMenu.getItem(i).setOnMenuItemClickListener(this);
         }
@@ -66,35 +67,35 @@ public abstract class DrawerActivity extends AppCompatActivity implements MenuIt
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    /* Override all setContentView methods to put the content view to the FrameLayout view_stub
+    /* Override all setContentView methods to put the content view to the FrameLayout viewStub
      * so that, we can make other activity implementations looks like normal activity subclasses.
      */
     @Override
     public void setContentView(int layoutResID) {
-        if (view_stub != null) {
+        if (viewStub != null) {
             LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
             ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
-            View stubView = inflater.inflate(layoutResID, view_stub, false);
-            view_stub.addView(stubView, lp);
+            View stubView = inflater.inflate(layoutResID, viewStub, false);
+            viewStub.addView(stubView, lp);
         }
     }
 
     @Override
     public void setContentView(View view) {
-        if (view_stub != null) {
+        if (viewStub != null) {
             ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
-            view_stub.addView(view, lp);
+            viewStub.addView(view, lp);
         }
     }
 
     @Override
     public void setContentView(View view, ViewGroup.LayoutParams params) {
-        if (view_stub != null) {
-            view_stub.addView(view, params);
+        if (viewStub != null) {
+            viewStub.addView(view, params);
         }
     }
 
@@ -113,14 +114,24 @@ public abstract class DrawerActivity extends AppCompatActivity implements MenuIt
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-//            case R.id.item1:
-//                // handle it
-//                break;
-//            case R.id.item2:
-//                // do whatever
-//                break;
-//            // and so on...
+            case R.id.nav_message:
+                // handle it
+                break;
+            case R.id.nav_settings:
+                // do whatever
+                break;
+            case R.id.nav_logout:
+                switchToLoginActivity();
+                UserSession.resetSession();
+                break;
+            // and so on...
         }
         return false;
+    }
+
+    private void switchToLoginActivity() {
+        final Intent login = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(login);
+        finish();
     }
 }
