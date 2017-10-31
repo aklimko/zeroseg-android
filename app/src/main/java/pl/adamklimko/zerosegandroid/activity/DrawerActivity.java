@@ -27,36 +27,28 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     private ActionBarDrawerToggle mDrawerToggle;
     private ImageView mProfilePicture;
     private TextView mUsername;
-    private Menu drawerMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.drawer_layout);// The base layout that contains your navigation drawer.
+        super.setContentView(R.layout.drawer_layout);
         viewStub = (FrameLayout) findViewById(R.id.view_stub);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setCheckedItem(0);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        // TODO: show profile picture
         mProfilePicture = (ImageView) findViewById(R.id.header_image);
 
         View v = navigationView.getHeaderView(0);
         mUsername = v.findViewById(R.id.header_username);
         mUsername.setText(UserSession.getUsername());
 
-        // TODO: show profile picture
-
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         navigationView.setNavigationItemSelectedListener(this);
-
-//        drawerMenu = navigationView.getMenu();
-//        for(int i = 0; i < drawerMenu.size(); i++) {
-//            drawerMenu.getItem(i).setOnMenuItemClickListener(this);
-//        }
-        // and so on...
     }
 
     @Override

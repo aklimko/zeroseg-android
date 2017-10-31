@@ -1,9 +1,12 @@
 package pl.adamklimko.zerosegandroid.rest;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.text.TextUtils;
 import pl.adamklimko.zerosegandroid.model.Token;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class UserSession {
     
@@ -18,6 +21,10 @@ public class UserSession {
 
     public static SharedPreferences getPreferences() {
         return preferences;
+    }
+
+    public static void initPreferences(Context context) {
+        preferences = context.getSharedPreferences(UserSession.PREFERENCES, MODE_PRIVATE);
     }
 
     public static void setPreferences(SharedPreferences preferences) {
@@ -55,7 +62,7 @@ public class UserSession {
         editor.apply();
     }
 
-    public static boolean isFirstStarted() {
+    public static boolean isAppJustStarted() {
         return firstStarted;
     }
 

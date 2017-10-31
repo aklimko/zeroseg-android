@@ -4,22 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,20 +17,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.exception.NoNetworkConnectedException;
-import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.model.Token;
 import pl.adamklimko.zerosegandroid.model.User;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
+import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.rest.ZerosegService;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -61,9 +45,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // Setting SharedPreferences
-        if (UserSession.isFirstStarted()) {
-            SharedPreferences preferences = getApplicationContext().getSharedPreferences(UserSession.PREFERENCES, MODE_PRIVATE);
-            UserSession.setPreferences(preferences);
+        if (UserSession.isAppJustStarted()) {
+            UserSession.initPreferences(getApplicationContext());
         }
 
         if (UserSession.hasToken()) {
@@ -72,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
             messageActivity.setClass(getApplicationContext(), MessageActivity.class);
             startActivity(messageActivity);
             finish();
+            Toast.makeText(this, "Welcome " + UserSession.getUsername(), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -204,10 +188,8 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
             final Call<Token> tokenCall = zerosegService.login(user);
             final Response<Token> response;
-            // FIXME: this shit is fucked up
             try {
                 response = tokenCall.execute();
             } catch (NoNetworkConnectedException e) {
