@@ -44,7 +44,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
         View v = navigationView.getHeaderView(0);
         mUsername = v.findViewById(R.id.header_username);
-        //mUsername.setText(UserSession.getUsername());
+        mUsername.setText(UserSession.getUsername());
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
