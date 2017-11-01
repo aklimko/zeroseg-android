@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import pl.adamklimko.zerosegandroid.R;
+import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
+import pl.adamklimko.zerosegandroid.fragment.SettingsFragment;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 
 public abstract class DrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,10 +44,10 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
         View v = navigationView.getHeaderView(0);
         mUsername = v.findViewById(R.id.header_username);
-        mUsername.setText(UserSession.getUsername());
+        //mUsername.setText(UserSession.getUsername());
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -110,8 +112,18 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
         switch (id) {
             case R.id.nav_message:
+                MessageFragment cameraFragment = new MessageFragment();
+                FragmentManager manager = getSupportFragmentManager();
+                manager.beginTransaction()
+                        .replace(R.id.fragment_container, cameraFragment)
+                        .commit();
                 break;
             case R.id.nav_settings:
+                SettingsFragment settingsFragment = new SettingsFragment();
+                FragmentManager manager2 = getSupportFragmentManager();
+                manager2.beginTransaction()
+                        .replace(R.id.fragment_container, settingsFragment)
+                        .commit();
                 break;
             case R.id.nav_logout:
                 switchToLoginActivity();

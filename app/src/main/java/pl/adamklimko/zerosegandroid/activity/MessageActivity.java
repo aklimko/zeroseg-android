@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.exception.NoNetworkConnectedException;
+import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
 import pl.adamklimko.zerosegandroid.model.Message;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
@@ -43,25 +45,33 @@ public class MessageActivity extends DrawerActivity {
 
         zerosegService = ApiClient.createServiceWithAuth(ZerosegService.class, this);
 
-        mMessageView = (EditText) findViewById(R.id.message);
-        mMessageView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    sendMessage();
-                    return true;
-                }
-                return false;
-            }
-        });
-        mSendButton = (Button) findViewById(R.id.message_send_button);
+        if (savedInstanceState == null) {
+            MessageFragment cameraFragment = new MessageFragment();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction()
+                    .replace(R.id.fragment_container, cameraFragment)
+                    .commit();
+        }
 
-        mSendButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage();
-            }
-        });
+//        mMessageView = (EditText) findViewById(R.id.message);
+//        mMessageView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+//                    sendMessage();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+        //mSendButton = (Button) findViewById(R.id.message_send_button);
+
+//        mSendButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                sendMessage();
+//            }
+//        });
     }
 
     private void sendMessage() {
