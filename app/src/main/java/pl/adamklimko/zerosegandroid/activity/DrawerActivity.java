@@ -23,12 +23,16 @@ import pl.adamklimko.zerosegandroid.fragment.SettingsFragment;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 
 public abstract class DrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     private FrameLayout viewStub; //This is the framelayout to keep your content view
     private NavigationView navigationView; // The new navigation view from Android Design Library. Can inflate menu resources. Easy
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ImageView mProfilePicture;
     private TextView mUsername;
+    private MessageFragment messageFragment;
+    private SettingsFragment settingsFragment;
+    private FragmentManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +46,21 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         // TODO: show profile picture
         mProfilePicture = (ImageView) findViewById(R.id.header_image);
 
-        View v = navigationView.getHeaderView(0);
+        final View v = navigationView.getHeaderView(0);
         mUsername = v.findViewById(R.id.header_username);
         mUsername.setText(UserSession.getUsername());
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        messageFragment = MessageFragment.newInstance();
+        settingsFragment = SettingsFragment.newInstance();
+        manager = getSupportFragmentManager();
     }
 
     @Override
@@ -65,17 +75,14 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    /* Override all setContentView methods to put the content view to the FrameLayout viewStub
-     * so that, we can make other activity implementations looks like normal activity subclasses.
-     */
     @Override
     public void setContentView(int layoutResID) {
         if (viewStub != null) {
-            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
             ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
-            View stubView = inflater.inflate(layoutResID, viewStub, false);
+            final View stubView = inflater.inflate(layoutResID, viewStub, false);
             viewStub.addView(stubView, lp);
         }
     }
@@ -83,7 +90,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     @Override
     public void setContentView(View view) {
         if (viewStub != null) {
-            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
+            final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
             viewStub.addView(view, lp);
@@ -108,20 +115,16 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        final int id = item.getItemId();
 
         switch (id) {
             case R.id.nav_message:
-                MessageFragment cameraFragment = new MessageFragment();
-                FragmentManager manager = getSupportFragmentManager();
                 manager.beginTransaction()
-                        .replace(R.id.fragment_container, cameraFragment)
+                        .replace(R.id.fragment_container, messageFragment)
                         .commit();
                 break;
             case R.id.nav_settings:
-                SettingsFragment settingsFragment = new SettingsFragment();
-                FragmentManager manager2 = getSupportFragmentManager();
-                manager2.beginTransaction()
+                manager.beginTransaction()
                         .replace(R.id.fragment_container, settingsFragment)
                         .commit();
                 break;
@@ -140,5 +143,16 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         final Intent login = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(login);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewStub = null;
+        navigationView = null;
+        mDrawerLayout = null;
+        mDrawerToggle = null;
+        manager = null;
+        System.gc();
     }
 }

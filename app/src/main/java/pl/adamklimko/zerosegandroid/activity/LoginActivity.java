@@ -51,8 +51,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (UserSession.hasToken()) {
             UserSession.setFirstStarted(false);
-            Intent messageActivity = new Intent();
-            messageActivity.setClass(getApplicationContext(), MessageActivity.class);
+            final Intent messageActivity = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(messageActivity);
             finish();
             Toast.makeText(this, "Welcome " + UserSession.getUsername(), Toast.LENGTH_SHORT).show();
@@ -75,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mSignInButton = (Button) findViewById(R.id.username_sign_in_button);
+        final Button mSignInButton = (Button) findViewById(R.id.username_sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,8 +101,8 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String username = mUsernameView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -126,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            User user = new User(username, password);
+            final User user = new User(username, password);
             mAuthTask = new UserLoginTask(user);
             mAuthTask.execute((Void) null);
         }
@@ -141,35 +140,39 @@ public class LoginActivity extends AppCompatActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        final int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAuthTask != null) {
+            mAuthTask = null;
         }
+        zerosegService = null;
+        mLoginFormView = null;
+        mUsernameView = null;
+        mPasswordView = null;
+        mProgressView = null;
+        System.gc();
     }
 
     /**
@@ -258,8 +261,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         private void startPostLoginActivity() {
-            Intent messageActivity = new Intent();
-            messageActivity.setClass(getApplicationContext(), MessageActivity.class);
+            final Intent messageActivity = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(messageActivity);
         }
 
