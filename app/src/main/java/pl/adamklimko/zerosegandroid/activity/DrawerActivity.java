@@ -137,7 +137,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
                 break;
         }
 
-        uncheckAllMenuItems();
+        uncheckAllCheckedMenuItems();
         navigationView.getMenu().findItem(id).setChecked(true);
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -150,7 +150,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         finish();
     }
 
-    private void uncheckAllMenuItems() {
+    private void uncheckAllCheckedMenuItems() {
         final Menu menu = navigationView.getMenu();
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
