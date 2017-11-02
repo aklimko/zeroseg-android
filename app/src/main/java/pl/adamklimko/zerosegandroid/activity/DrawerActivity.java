@@ -10,7 +10,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -135,6 +137,9 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
                 break;
         }
 
+        uncheckAllMenuItems();
+        navigationView.getMenu().findItem(id).setChecked(true);
+
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -145,6 +150,24 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         finish();
     }
 
+    private void uncheckAllMenuItems() {
+        final Menu menu = navigationView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            if (item.hasSubMenu()) {
+                SubMenu subMenu = item.getSubMenu();
+                for (int j = 0; j < subMenu.size(); j++) {
+                    MenuItem subMenuItem = subMenu.getItem(j);
+                    if (subMenuItem.isChecked()) {
+                        subMenuItem.setChecked(false);
+                    }
+                }
+            } else if (item.isChecked()) {
+                item.setChecked(false);
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -153,6 +176,9 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         mDrawerLayout = null;
         mDrawerToggle = null;
         manager = null;
-        System.gc();
+        messageFragment = null;
+        settingsFragment = null;
+        mUsername = null;
+        mProfilePicture = null;
     }
 }

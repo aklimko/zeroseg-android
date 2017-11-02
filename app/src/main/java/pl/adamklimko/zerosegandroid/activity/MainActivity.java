@@ -1,7 +1,6 @@
 package pl.adamklimko.zerosegandroid.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
@@ -34,8 +33,6 @@ public class MainActivity extends DrawerActivity implements FragmentCommunicator
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (zerosegService != null) {
-            zerosegService = null;
-        }
+        zerosegService = null;
     }
 }
