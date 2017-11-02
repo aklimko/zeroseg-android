@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.exception.NoNetworkConnectedException;
+import pl.adamklimko.zerosegandroid.model.Profile;
 import pl.adamklimko.zerosegandroid.model.Token;
 import pl.adamklimko.zerosegandroid.model.User;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
@@ -132,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+        return password.length() > 3;
     }
 
     /**
@@ -217,11 +218,34 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 Log.i("LOGIN", "Successful login");
                 UserSession.setTokenInPreferences(token);
+                getUserProfile();
                 return true;
             } else if (response.code() == 403) {
                 Log.e("LOGIN", "Bad credentials");
             }
             return false;
+        }
+
+        private void getUserProfile() {
+            final ZerosegService authService = ApiClient.createServiceWithAuth(ZerosegService.class, getApplicationContext());
+            final Call<Profile> profileCall = authService.getProfile();
+            final Response<Profile> response;
+            try {
+                response = profileCall.execute();
+            } catch (NoNetworkConnectedException e) {
+                noNetworkConnection = true;
+                return;
+            } catch (SocketTimeoutException e) {
+                noInternetConnection = true;
+                return;
+            } catch (IOException e) {
+                return;
+            }
+            final Profile profile = response.body();
+            if (profile == null) {
+                return;
+            }
+            UserSession.setFullNameInPreferences(profile.getFullName());
         }
 
         @Override

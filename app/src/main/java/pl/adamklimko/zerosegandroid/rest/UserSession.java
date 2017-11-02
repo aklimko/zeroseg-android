@@ -12,10 +12,11 @@ public class UserSession {
     
     private static SharedPreferences preferences;
 
-    public static final String PREFERENCES = "Zeroseg Preferences";
-    private static final String PREFERENCES_USERNAME = "Username";
-    private static final String PREFERENCES_TOKEN = "Token";
-    private static final String PREFERENCES_EXPIRATION = "Expiration Date";
+    private static final String PREFERENCES = "zeroseg_preferences";
+    private static final String PREFERENCES_USERNAME = "username";
+    private static final String PREFERENCES_FULLNAME = "full_name";
+    private static final String PREFERENCES_TOKEN = "token";
+    private static final String PREFERENCES_EXPIRATION = "expiration_date";
 
     private static boolean firstStarted = true;
 
@@ -32,20 +33,30 @@ public class UserSession {
     }
 
     public static void setTokenInPreferences(Token token) {
-        Editor editor = preferences.edit();
+        final Editor editor = preferences.edit();
         editor.putString(PREFERENCES_TOKEN, token.getToken());
         editor.putString(PREFERENCES_EXPIRATION, token.getExpirationDate());
         editor.apply();
     }
 
     public static void setUsernameInPreferences(String username) {
-        Editor editor = preferences.edit();
+        final Editor editor = preferences.edit();
         editor.putString(PREFERENCES_USERNAME, username);
+        editor.apply();
+    }
+
+    public static void setFullNameInPreferences(String fullName) {
+        final Editor editor = preferences.edit();
+        editor.putString(PREFERENCES_FULLNAME, fullName);
         editor.apply();
     }
 
     public static String getUsername() {
         return preferences.getString(PREFERENCES_USERNAME, "");
+    }
+
+    public static String getFullName() {
+        return preferences.getString(PREFERENCES_FULLNAME, "");
     }
 
     public static String getToken() {
@@ -57,7 +68,7 @@ public class UserSession {
     }
 
     public static void resetSession() {
-        Editor editor = preferences.edit();
+        final Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
     }

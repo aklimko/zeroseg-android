@@ -9,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +51,12 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
         final View v = navigationView.getHeaderView(0);
         mUsername = v.findViewById(R.id.header_username);
-        mUsername.setText(UserSession.getUsername());
+        final String fullName = UserSession.getFullName();
+        if (!TextUtils.isEmpty(fullName)) {
+            mUsername.setText(fullName);
+        } else {
+            mUsername.setText(UserSession.getUsername());
+        }
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
