@@ -119,6 +119,11 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     public boolean onNavigationItemSelected(MenuItem item) {
         final int id = item.getItemId();
 
+        if (isItemChecked(id)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        }
+
         switch (id) {
             case R.id.nav_message:
                 manager.beginTransaction()
@@ -142,6 +147,10 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private boolean isItemChecked(final int id) {
+        return navigationView.getMenu().findItem(id).isChecked();
     }
 
     private void switchToLoginActivity() {
