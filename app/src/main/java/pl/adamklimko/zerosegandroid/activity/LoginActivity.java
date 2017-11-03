@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -24,6 +25,7 @@ import pl.adamklimko.zerosegandroid.model.User;
 import pl.adamklimko.zerosegandroid.rest.ApiClient;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.rest.ZerosegService;
+import pl.adamklimko.zerosegandroid.util.ProfilePictureUtil;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -249,31 +251,20 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
             UserSession.setProfileDataInPreferences(profile);
-            UserSession.setFullNameInPreferences(profile.getFullName());
             final String facebookId = profile.getFacebookId();
             if (TextUtils.isEmpty(facebookId)) {
                 return;
             }
-            UserSession.setFacebookIdInPreferences(profile.getFacebookId());
             setProfilePicture(facebookId);
         }
 
         private void setProfilePicture(String facebookId) {
-            final String facebookUrl = "https://graph.facebook.com//v2.10/" + facebookId + "/picture";
-            Drawable image = loadImageFromWebOperations(facebookUrl);
-            if (image == null) {
+            final Bitmap profilePicture = ProfilePictureUtil.getProfilePicture(facebookId);
+            if (profilePicture == null) {
                 return;
             }
-            UserSession.setProfilePicture(image);
-        }
-
-        private Drawable loadImageFromWebOperations(String url) {
-            try {
-                final InputStream is = (InputStream) new URL(url).getContent();
-                return Drawable.createFromStream(is, "src");
-            } catch (Exception e) {
-                return null;
-            }
+            ProfilePictureUtil.saveProfilePicture(profilePicture, getApplicationContext());
+//            UserSession.setProfilePicture(profilePicture);
         }
 
         @Override

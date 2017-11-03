@@ -3,7 +3,7 @@ package pl.adamklimko.zerosegandroid.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MessageUtils {
+public class MessageUtil {
     private static final Map<Character, Character> respectiveEquivalent;
 
     static {

@@ -22,7 +22,7 @@ public class UserSession {
     private static final String PREFERENCES_TOKEN = "token";
     private static final String PREFERENCES_EXPIRATION = "expiration_date";
 
-    private static Drawable profilePicture;
+    private static Bitmap profilePicture;
 
     private static boolean firstStarted = true;
 
@@ -55,11 +55,11 @@ public class UserSession {
         editor.apply();
     }
 
-    public static Drawable getProfilePicture() {
+    public static Bitmap getProfilePicture() {
         return profilePicture;
     }
 
-    public static void setProfilePicture(Drawable profilePicture) {
+    public static void setProfilePicture(Bitmap profilePicture) {
         UserSession.profilePicture = profilePicture;
     }
 

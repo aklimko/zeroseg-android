@@ -26,7 +26,7 @@ import pl.adamklimko.zerosegandroid.exception.NoNetworkConnectedException;
 import pl.adamklimko.zerosegandroid.model.Message;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.rest.ZerosegService;
-import pl.adamklimko.zerosegandroid.util.MessageUtils;
+import pl.adamklimko.zerosegandroid.util.MessageUtil;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -113,8 +113,8 @@ public class MessageFragment extends Fragment {
             return;
         }
 
-        if (MessageUtils.containsPolishCharacters(text)) {
-            text = MessageUtils.normalizePolishCharacters(text);
+        if (MessageUtil.containsPolishCharacters(text)) {
+            text = MessageUtil.normalizePolishCharacters(text);
         }
 
         mSendButton.setEnabled(false);
