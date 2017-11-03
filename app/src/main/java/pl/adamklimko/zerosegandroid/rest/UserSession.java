@@ -3,7 +3,10 @@ package pl.adamklimko.zerosegandroid.rest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import pl.adamklimko.zerosegandroid.model.Profile;
 import pl.adamklimko.zerosegandroid.model.Token;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -15,21 +18,16 @@ public class UserSession {
     private static final String PREFERENCES = "zeroseg_preferences";
     private static final String PREFERENCES_USERNAME = "username";
     private static final String PREFERENCES_FULLNAME = "full_name";
+    private static final String PREFERENCES_FACEBOOK_ID = "facebook_id";
     private static final String PREFERENCES_TOKEN = "token";
     private static final String PREFERENCES_EXPIRATION = "expiration_date";
 
-    private static boolean firstStarted = true;
+    private static Drawable profilePicture;
 
-    public static SharedPreferences getPreferences() {
-        return preferences;
-    }
+    private static boolean firstStarted = true;
 
     public static void initPreferences(Context context) {
         preferences = context.getSharedPreferences(UserSession.PREFERENCES, MODE_PRIVATE);
-    }
-
-    public static void setPreferences(SharedPreferences preferences) {
-        UserSession.preferences = preferences;
     }
 
     public static void setTokenInPreferences(Token token) {
@@ -49,6 +47,20 @@ public class UserSession {
         final Editor editor = preferences.edit();
         editor.putString(PREFERENCES_FULLNAME, fullName);
         editor.apply();
+    }
+
+    public static void setFacebookIdInPreferences(String id) {
+        final Editor editor = preferences.edit();
+        editor.putString(PREFERENCES_FACEBOOK_ID, id);
+        editor.apply();
+    }
+
+    public static Drawable getProfilePicture() {
+        return profilePicture;
+    }
+
+    public static void setProfilePicture(Drawable profilePicture) {
+        UserSession.profilePicture = profilePicture;
     }
 
     public static String getUsername() {
@@ -71,6 +83,7 @@ public class UserSession {
         final Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
+        profilePicture = null;
     }
 
     public static boolean isAppJustStarted() {
@@ -79,5 +92,21 @@ public class UserSession {
 
     public static void setFirstStarted(boolean firstStarted) {
         UserSession.firstStarted = firstStarted;
+    }
+
+    public static void setProfileDataInPreferences(Profile profile) {
+        final Editor editor = preferences.edit();
+
+        final String fullName = profile.getFullName();
+        if (!TextUtils.isEmpty(fullName)) {
+            editor.putString(PREFERENCES_FULLNAME, fullName);
+        }
+
+        final String facebookId = profile.getFacebookId();
+        if (!TextUtils.isEmpty(fullName)) {
+            editor.putString(PREFERENCES_FACEBOOK_ID, facebookId);
+        }
+
+        editor.apply();
     }
 }

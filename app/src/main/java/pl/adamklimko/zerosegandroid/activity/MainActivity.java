@@ -13,7 +13,7 @@ public class MainActivity extends DrawerActivity implements FragmentCommunicator
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message);
+        setContentView(R.layout.activity_main);
 
         zerosegService = ApiClient.createServiceWithAuth(ZerosegService.class, this);
 

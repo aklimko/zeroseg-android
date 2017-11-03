@@ -2,6 +2,7 @@ package pl.adamklimko.zerosegandroid.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -46,9 +47,6 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         navigationView.setCheckedItem(0);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        // TODO: show profile picture
-        mProfilePicture = (ImageView) findViewById(R.id.header_image);
-
         final View v = navigationView.getHeaderView(0);
         mUsername = v.findViewById(R.id.header_username);
         final String fullName = UserSession.getFullName();
@@ -56,6 +54,12 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
             mUsername.setText(fullName);
         } else {
             mUsername.setText(UserSession.getUsername());
+        }
+
+        mProfilePicture = v.findViewById(R.id.header_image);
+        final Drawable picture = UserSession.getProfilePicture();
+        if (picture != null) {
+            mProfilePicture.setImageDrawable(picture);
         }
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);

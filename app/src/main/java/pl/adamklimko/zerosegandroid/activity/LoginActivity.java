@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,7 +28,9 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -245,7 +248,32 @@ public class LoginActivity extends AppCompatActivity {
             if (profile == null) {
                 return;
             }
+            UserSession.setProfileDataInPreferences(profile);
             UserSession.setFullNameInPreferences(profile.getFullName());
+            final String facebookId = profile.getFacebookId();
+            if (TextUtils.isEmpty(facebookId)) {
+                return;
+            }
+            UserSession.setFacebookIdInPreferences(profile.getFacebookId());
+            setProfilePicture(facebookId);
+        }
+
+        private void setProfilePicture(String facebookId) {
+            final String facebookUrl = "https://graph.facebook.com//v2.10/" + facebookId + "/picture";
+            Drawable image = loadImageFromWebOperations(facebookUrl);
+            if (image == null) {
+                return;
+            }
+            UserSession.setProfilePicture(image);
+        }
+
+        private Drawable loadImageFromWebOperations(String url) {
+            try {
+                final InputStream is = (InputStream) new URL(url).getContent();
+                return Drawable.createFromStream(is, "src");
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         @Override
