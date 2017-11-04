@@ -3,8 +3,6 @@ package pl.adamklimko.zerosegandroid.rest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import pl.adamklimko.zerosegandroid.model.Profile;
 import pl.adamklimko.zerosegandroid.model.Token;
@@ -21,8 +19,6 @@ public class UserSession {
     private static final String PREFERENCES_FACEBOOK_ID = "facebook_id";
     private static final String PREFERENCES_TOKEN = "token";
     private static final String PREFERENCES_EXPIRATION = "expiration_date";
-
-    private static Bitmap profilePicture;
 
     private static boolean firstStarted = true;
 
@@ -41,26 +37,6 @@ public class UserSession {
         final Editor editor = preferences.edit();
         editor.putString(PREFERENCES_USERNAME, username);
         editor.apply();
-    }
-
-    public static void setFullNameInPreferences(String fullName) {
-        final Editor editor = preferences.edit();
-        editor.putString(PREFERENCES_FULLNAME, fullName);
-        editor.apply();
-    }
-
-    public static void setFacebookIdInPreferences(String id) {
-        final Editor editor = preferences.edit();
-        editor.putString(PREFERENCES_FACEBOOK_ID, id);
-        editor.apply();
-    }
-
-    public static Bitmap getProfilePicture() {
-        return profilePicture;
-    }
-
-    public static void setProfilePicture(Bitmap profilePicture) {
-        UserSession.profilePicture = profilePicture;
     }
 
     public static String getUsername() {
@@ -83,7 +59,6 @@ public class UserSession {
         final Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
-        profilePicture = null;
     }
 
     public static boolean isAppJustStarted() {

@@ -11,17 +11,17 @@ public class ApiClient {
     private static final String API_URL = "http://api.adamklimko.pl/raspberry/";
     private static final int TIMEOUT = 5;
 
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+    private final static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS);
 
-    private static OkHttpClient.Builder httpClientAuth = new OkHttpClient.Builder()
+    private final static OkHttpClient.Builder httpClientAuth = new OkHttpClient.Builder()
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS);
 
-    private static Retrofit.Builder builder =
+    private final static Retrofit.Builder builder =
             new Retrofit.Builder()
                     .baseUrl(API_URL)
                     .addConverterFactory(GsonConverterFactory.create());

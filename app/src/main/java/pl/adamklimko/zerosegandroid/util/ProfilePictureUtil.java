@@ -1,7 +1,6 @@
 package pl.adamklimko.zerosegandroid.util;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -11,7 +10,7 @@ import java.net.URL;
 
 public class ProfilePictureUtil {
 
-    public static final String PROFILE_PICTURE = "profile_picture.jpg";
+    private static final String PROFILE_PICTURE = "profile_picture.jpg";
 
     public static Bitmap getProfilePicture(String facebookId) {
         try {
@@ -26,13 +25,8 @@ public class ProfilePictureUtil {
         }
     }
 
-    public static String getProfilePicturePath(Context context) {
-        final ContextWrapper cw = new ContextWrapper(context);
-        return cw.getDir("images", Context.MODE_PRIVATE).getAbsolutePath();
-    }
-
-    public static boolean saveProfilePicture(Bitmap bitmapImage, Context context) {
-        File path = new File(context.getFilesDir(), PROFILE_PICTURE);
+    public static void saveProfilePicture(Bitmap bitmapImage, Context context) {
+        final File path = new File(context.getFilesDir(), PROFILE_PICTURE);
 
         FileOutputStream fos = null;
         try {
@@ -40,15 +34,15 @@ public class ProfilePictureUtil {
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         } catch (Exception e) {
             fos = null;
-            return false;
         } finally {
             try {
-                fos.close();
+                if (fos != null) {
+                    fos.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return true;
     }
 
     public static Bitmap loadImageFromStorage(Context context) {

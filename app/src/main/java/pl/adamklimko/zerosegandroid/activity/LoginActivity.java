@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,9 +29,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 

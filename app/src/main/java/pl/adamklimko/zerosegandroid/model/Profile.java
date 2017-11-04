@@ -13,15 +13,8 @@ public class Profile {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
     public String getFacebookId() {
         return facebookId;
     }
 
-    public void setFacebookId(String facebookId) {
-        this.facebookId = facebookId;
-    }
 }

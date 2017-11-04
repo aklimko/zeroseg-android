@@ -1,47 +1,26 @@
 package pl.adamklimko.zerosegandroid.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import pl.adamklimko.zerosegandroid.R;
-import pl.adamklimko.zerosegandroid.exception.NoNetworkConnectedException;
 import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
 import pl.adamklimko.zerosegandroid.fragment.SettingsFragment;
-import pl.adamklimko.zerosegandroid.model.Message;
-import pl.adamklimko.zerosegandroid.model.Profile;
-import pl.adamklimko.zerosegandroid.rest.ApiClient;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
-import pl.adamklimko.zerosegandroid.rest.ZerosegService;
 import pl.adamklimko.zerosegandroid.util.ProfilePictureUtil;
-import retrofit2.Call;
-import retrofit2.Response;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 
 public abstract class DrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -54,14 +33,11 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     private MessageFragment messageFragment;
     private SettingsFragment settingsFragment;
     private FragmentManager manager;
-    private ZerosegService zerosegService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.drawer_layout);
-
-        zerosegService = ApiClient.createServiceWithAuth(ZerosegService.class, getApplicationContext());
 
         viewStub = (FrameLayout) findViewById(R.id.view_stub);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -82,13 +58,6 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         if (profile != null) {
             mProfilePicture.setImageBitmap(profile);
         }
-//        final Drawable picture = UserSession.getProfilePicture();
-//        if (picture != null) {
-//            mProfilePicture.setImageDrawable(picture);
-//        }
-
-//        final ProfilePictureTask profilePictureTask = new ProfilePictureTask();
-//        profilePictureTask.execute((Void) null);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -227,46 +196,5 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         settingsFragment = null;
         mUsername = null;
         mProfilePicture = null;
-    }
-
-    public class ProfilePictureTask extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            final Call<Profile> profileCall = zerosegService.getProfile();
-            final Response<Profile> response;
-            try {
-                response = profileCall.execute();
-            } catch (IOException e) {
-                return false;
-            }
-            final Profile profile = response.body();
-            if (profile == null) {
-                return false;
-            }
-            UserSession.setProfileDataInPreferences(profile);
-            setProfilePicture(profile.getFacebookId());
-            return true;
-        }
-
-        private void setProfilePicture(String facebookId) {
-            final String facebookUrl = "https://graph.facebook.com//v2.10/" + facebookId + "/picture";
-            final Bitmap image = ProfilePictureUtil.loadImageFromStorage(getApplicationContext());
-            if (image == null) {
-                return;
-            }
-            UserSession.setProfilePicture(image);
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            return;
-        }
-
-
-        @Override
-        protected void onCancelled() {
-
-        }
     }
 }

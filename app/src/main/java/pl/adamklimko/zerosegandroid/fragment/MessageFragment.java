@@ -66,11 +66,6 @@ public class MessageFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -125,11 +120,6 @@ public class MessageFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         mSendButton = null;
@@ -137,7 +127,7 @@ public class MessageFragment extends Fragment {
         mContext = null;
     }
 
-    public class MessageTask extends AsyncTask<Void, Void, Boolean> {
+    class MessageTask extends AsyncTask<Void, Void, Boolean> {
 
         private final Message message;
         private String connectionErrorMessage = "";

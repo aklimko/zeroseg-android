@@ -15,15 +15,7 @@ public class Token {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getExpirationDate() {
         return expirationDate;
-    }
-
-    public void setExpirationDate(String expirationDate) {
-        this.expirationDate = expirationDate;
     }
 }
