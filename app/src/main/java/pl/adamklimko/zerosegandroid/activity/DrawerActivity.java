@@ -136,11 +136,16 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
                 manager.beginTransaction()
                         .replace(R.id.fragment_container, messageFragment)
                         .commit();
+                switchCheckedItem(id);
                 break;
             case R.id.nav_settings:
                 manager.beginTransaction()
                         .replace(R.id.fragment_container, settingsFragment)
                         .commit();
+                switchCheckedItem(id);
+                break;
+            case R.id.nav_profile:
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 break;
             case R.id.nav_logout:
                 switchToLoginActivity();
@@ -149,11 +154,13 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
                 break;
         }
 
-        uncheckAllCheckedMenuItems();
-        navigationView.getMenu().findItem(id).setChecked(true);
-
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void switchCheckedItem(int id) {
+        uncheckAllCheckedMenuItems();
+        navigationView.getMenu().findItem(id).setChecked(true);
     }
 
     private boolean isItemChecked(final int id) {

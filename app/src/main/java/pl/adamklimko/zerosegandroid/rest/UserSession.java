@@ -3,56 +3,58 @@ package pl.adamklimko.zerosegandroid.rest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import pl.adamklimko.zerosegandroid.model.Profile;
 import pl.adamklimko.zerosegandroid.model.Token;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class UserSession {
     
     private static SharedPreferences preferences;
 
-    private static final String PREFERENCES = "zeroseg_preferences";
-    private static final String PREFERENCES_USERNAME = "username";
-    private static final String PREFERENCES_FULLNAME = "full_name";
-    private static final String PREFERENCES_FACEBOOK_ID = "facebook_id";
-    private static final String PREFERENCES_TOKEN = "token";
-    private static final String PREFERENCES_EXPIRATION = "expiration_date";
+    private static final String USERNAME = "username";
+    public static final String FULL_NAME = "full_name";
+    public static final String FACEBOOK_ID = "facebook_id";
+    private static final String TOKEN = "token";
+    private static final String EXPIRATION_DATE = "expiration_date";
 
     private static boolean firstStarted = true;
 
     public static void initPreferences(Context context) {
-        preferences = context.getSharedPreferences(UserSession.PREFERENCES, MODE_PRIVATE);
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public static void setTokenInPreferences(Token token) {
         final Editor editor = preferences.edit();
-        editor.putString(PREFERENCES_TOKEN, token.getToken());
-        editor.putString(PREFERENCES_EXPIRATION, token.getExpirationDate());
+        editor.putString(TOKEN, token.getToken());
+        editor.putString(EXPIRATION_DATE, token.getExpirationDate());
         editor.apply();
     }
 
     public static void setUsernameInPreferences(String username) {
         final Editor editor = preferences.edit();
-        editor.putString(PREFERENCES_USERNAME, username);
+        editor.putString(USERNAME, username);
         editor.apply();
     }
 
     public static String getUsername() {
-        return preferences.getString(PREFERENCES_USERNAME, "");
+        return preferences.getString(USERNAME, "");
     }
 
     public static String getFullName() {
-        return preferences.getString(PREFERENCES_FULLNAME, "");
+        return preferences.getString(FULL_NAME, "");
+    }
+
+    public static String getFacebookId() {
+        return preferences.getString(FACEBOOK_ID, "");
     }
 
     public static String getToken() {
-        return preferences.getString(PREFERENCES_TOKEN, "");
+        return preferences.getString(TOKEN, "");
     }
 
     public static boolean hasToken() {
-         return !TextUtils.isEmpty(preferences.getString(PREFERENCES_TOKEN, ""));
+         return !TextUtils.isEmpty(preferences.getString(TOKEN, ""));
     }
 
     public static void resetSession() {
@@ -74,12 +76,12 @@ public class UserSession {
 
         final String fullName = profile.getFullName();
         if (!TextUtils.isEmpty(fullName)) {
-            editor.putString(PREFERENCES_FULLNAME, fullName);
+            editor.putString(FULL_NAME, fullName);
         }
 
         final String facebookId = profile.getFacebookId();
         if (!TextUtils.isEmpty(fullName)) {
-            editor.putString(PREFERENCES_FACEBOOK_ID, facebookId);
+            editor.putString(FACEBOOK_ID, facebookId);
         }
 
         editor.apply();

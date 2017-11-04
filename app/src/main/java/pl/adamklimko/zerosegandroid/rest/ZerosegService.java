@@ -7,6 +7,7 @@ import pl.adamklimko.zerosegandroid.model.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 
 
@@ -19,4 +20,7 @@ public interface ZerosegService {
 
     @GET("user/profile")
     Call<Profile> getProfile();
+
+    @PATCH("user/profile")
+    Call<Profile> patchProfile(@Body Profile profile);
 }
