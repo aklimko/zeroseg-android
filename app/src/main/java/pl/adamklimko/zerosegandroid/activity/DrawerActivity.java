@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
-import pl.adamklimko.zerosegandroid.fragment.SettingsFragment;
+import pl.adamklimko.zerosegandroid.fragment.ConfigurationFragment;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.util.ProfilePictureUtil;
 
@@ -31,7 +31,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     private ImageView mProfilePicture;
     private TextView mUsername;
     private MessageFragment messageFragment;
-    private SettingsFragment settingsFragment;
+    private ConfigurationFragment configurationFragment;
     private FragmentManager manager;
 
     @Override
@@ -68,7 +68,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         navigationView.setNavigationItemSelectedListener(this);
 
         messageFragment = MessageFragment.newInstance();
-        settingsFragment = SettingsFragment.newInstance();
+        configurationFragment = ConfigurationFragment.newInstance();
         manager = getSupportFragmentManager();
     }
 
@@ -138,13 +138,13 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
                         .commit();
                 switchCheckedItem(id);
                 break;
-            case R.id.nav_settings:
+            case R.id.nav_configuration:
                 manager.beginTransaction()
-                        .replace(R.id.fragment_container, settingsFragment)
+                        .replace(R.id.fragment_container, configurationFragment)
                         .commit();
                 switchCheckedItem(id);
                 break;
-            case R.id.nav_profile:
+            case R.id.nav_settings:
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 break;
             case R.id.nav_logout:
@@ -200,7 +200,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         mDrawerToggle = null;
         manager = null;
         messageFragment = null;
-        settingsFragment = null;
+        configurationFragment = null;
         mUsername = null;
         mProfilePicture = null;
     }

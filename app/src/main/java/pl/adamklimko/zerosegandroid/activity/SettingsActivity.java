@@ -25,7 +25,6 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -191,7 +190,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                 @Override
                 public void onFailure(Call<Profile> call, Throwable t) {
-                    Toast.makeText(mContext, "Failed to update", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Cannot connect to server", Toast.LENGTH_SHORT).show();
                 }
             });
         }

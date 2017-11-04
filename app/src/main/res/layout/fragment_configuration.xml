@@ -2,13 +2,13 @@
                                              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="pl.adamklimko.zerosegandroid.fragment.SettingsFragment">
+             tools:context="pl.adamklimko.zerosegandroid.fragment.ConfigurationFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="settings" android:textSize="100sp"
+            android:text="config" android:textSize="70sp"
             android:layout_marginLeft="0dp" app:layout_constraintLeft_toLeftOf="parent" android:layout_marginRight="0dp"
             app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="0dp" app:layout_constraintBottom_toBottomOf="parent"
