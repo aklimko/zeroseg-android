@@ -1,11 +1,15 @@
 package pl.adamklimko.zerosegandroid.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,8 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import pl.adamklimko.zerosegandroid.R;
-import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
 import pl.adamklimko.zerosegandroid.fragment.ConfigurationFragment;
+import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.util.ProfilePictureUtil;
 
@@ -33,6 +37,13 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     private MessageFragment messageFragment;
     private ConfigurationFragment configurationFragment;
     private FragmentManager manager;
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateProfile();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +69,10 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         if (profile != null) {
             mProfilePicture.setImageBitmap(profile);
         }
+
+        // register to receive messages
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("update_profile"));
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -158,13 +173,13 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         return true;
     }
 
+    private boolean isItemChecked(final int id) {
+        return navigationView.getMenu().findItem(id).isChecked();
+    }
+
     private void switchCheckedItem(int id) {
         uncheckAllCheckedMenuItems();
         navigationView.getMenu().findItem(id).setChecked(true);
-    }
-
-    private boolean isItemChecked(final int id) {
-        return navigationView.getMenu().findItem(id).isChecked();
     }
 
     private void switchToLoginActivity() {
@@ -191,9 +206,19 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         }
     }
 
+    private void updateProfile() {
+        final String fullName = UserSession.getFullName();
+        if (!TextUtils.isEmpty(fullName)) {
+            mUsername.setText(fullName);
+        } else {
+            mUsername.setText(UserSession.getUsername());
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         viewStub = null;
         navigationView = null;
         mDrawerLayout = null;

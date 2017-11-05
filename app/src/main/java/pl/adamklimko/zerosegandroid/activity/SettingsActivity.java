@@ -2,6 +2,7 @@ package pl.adamklimko.zerosegandroid.activity;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.model.Profile;
@@ -55,6 +57,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     };
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onBackPressed() {
         if (inFragment) {
             updateProfileIfChanged();
@@ -65,8 +72,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private void updateProfileIfChanged() {
         final Profile profileAfterChanges = new Profile(UserSession.getFullName(), UserSession.getFacebookId());
         if (profileChanged(profileAfterChanges)) {
+            informToUpdateProfileViewInDrawer();
             updateProfilePreferencesInApi(profileAfterChanges);
         }
+    }
+
+    private void informToUpdateProfileViewInDrawer() {
+        Intent intent = new Intent("update_profile");
+        intent.putExtra("message", "This is my message!");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private boolean profileChanged(Profile profileAfterChanges) {
@@ -122,11 +136,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     /**
