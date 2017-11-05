@@ -9,8 +9,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.view.MenuItem;
 import android.widget.Toast;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.model.Profile;
@@ -25,6 +23,8 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
+    private boolean inFragment = false;
+    private Profile profileBeforeChanges;
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -54,15 +54,45 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     };
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        final int id = item.getItemId();
-//        if (id == android.R.id.home) {
-//            finish();
-//            return false;
-//        }
-//        return false;
-//    }
+    @Override
+    public void onBackPressed() {
+        if (inFragment) {
+            updateProfileIfChanged();
+        }
+        super.onBackPressed();
+    }
+
+    private void updateProfileIfChanged() {
+        final Profile profileAfterChanges = new Profile(UserSession.getFullName(), UserSession.getFacebookId());
+        if (profileChanged(profileAfterChanges)) {
+            updateProfilePreferencesInApi(profileAfterChanges);
+        }
+    }
+
+    private boolean profileChanged(Profile profileAfterChanges) {
+        return !profileBeforeChanges.equals(profileAfterChanges);
+    }
+
+    private void updateProfilePreferencesInApi(Profile profileAfterChanges) {
+        final Context mContext = getApplicationContext();
+        final ZerosegService zerosegService = ApiClient.createServiceWithAuth(ZerosegService.class, mContext);
+        final Call<Profile> patchProfileCall = zerosegService.patchProfile(profileAfterChanges);
+        patchProfileCall.enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(mContext, "Profile updated", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mContext, "Failed to update", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+                Toast.makeText(mContext, "Cannot connect to server", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     /**
      * Helper method to determine if the device has an extra-large screen. For
@@ -97,18 +127,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
-    }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     /**
@@ -134,7 +152,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName);
+                || ProfilePreferenceFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -142,9 +160,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment {
-
-        private final Profile profileBeforeChanges = new Profile(UserSession.getFullName(), UserSession.getFacebookId());
+    public static class ProfilePreferenceFragment extends PreferenceFragment {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -152,47 +168,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_profile);
             setHasOptionsMenu(true);
 
+            ((SettingsActivity) getActivity()).inFragment = true;
+            ((SettingsActivity) getActivity()).profileBeforeChanges = new Profile(UserSession.getFullName(), UserSession.getFacebookId());
+
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
             SettingsActivity.bindPreferenceSummaryToValue(findPreference(UserSession.FULL_NAME));
             SettingsActivity.bindPreferenceSummaryToValue(findPreference(UserSession.FACEBOOK_ID));
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            final int id = item.getItemId();
-            if (id == android.R.id.home) {
-                final Profile profileAfterChanges = new Profile(UserSession.getFullName(), UserSession.getFacebookId());
-                if (!profileBeforeChanges.equals(profileAfterChanges)) {
-                    updateProfilePreferencesInApi(profileAfterChanges);
-                }
-                getActivity().finish();
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-
-        private void updateProfilePreferencesInApi(Profile profileAfterChanges) {
-            final Context mContext = getActivity().getApplicationContext();
-            final ZerosegService zerosegService = ApiClient.createServiceWithAuth(ZerosegService.class, mContext);
-            final Call<Profile> patchProfileCall = zerosegService.patchProfile(profileAfterChanges);
-            patchProfileCall.enqueue(new Callback<Profile>() {
-                @Override
-                public void onResponse(Call<Profile> call, Response<Profile> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(mContext, "Profile updated", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(mContext, "Failed to update", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Profile> call, Throwable t) {
-                    Toast.makeText(mContext, "Cannot connect to server", Toast.LENGTH_SHORT).show();
-                }
-            });
         }
     }
 }

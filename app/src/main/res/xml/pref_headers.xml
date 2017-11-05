@@ -3,7 +3,7 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-            android:fragment="pl.adamklimko.zerosegandroid.activity.SettingsActivity$GeneralPreferenceFragment"
+            android:fragment="pl.adamklimko.zerosegandroid.activity.SettingsActivity$ProfilePreferenceFragment"
             android:title="@string/pref_header_profile"
             android:icon="@drawable/ic_info_black_24dp"/>
 
