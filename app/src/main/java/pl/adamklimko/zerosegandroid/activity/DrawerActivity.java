@@ -23,6 +23,7 @@ import android.widget.Toast;
 import pl.adamklimko.zerosegandroid.R;
 import pl.adamklimko.zerosegandroid.fragment.ConfigurationFragment;
 import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
+import pl.adamklimko.zerosegandroid.rest.ProfilePictureTask;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
 import pl.adamklimko.zerosegandroid.util.ProfilePictureUtil;
 
@@ -38,10 +39,17 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     private ConfigurationFragment configurationFragment;
     private FragmentManager manager;
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mProfileUpdatedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateProfile();
+        }
+    };
+
+    private BroadcastReceiver mNewProfilePictureSaved = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            redrawProfilePicture();
         }
     };
 
@@ -71,8 +79,10 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         }
 
         // register to receive messages
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+        LocalBroadcastManager.getInstance(this).registerReceiver(mProfileUpdatedReceiver,
                 new IntentFilter("update_profile"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mNewProfilePictureSaved,
+                new IntentFilter("redraw_picture"));
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -207,6 +217,11 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     }
 
     private void updateProfile() {
+        updateFullName();
+        updateProfilePicture();
+    }
+
+    private void updateFullName() {
         final String fullName = UserSession.getFullName();
         if (!TextUtils.isEmpty(fullName)) {
             mUsername.setText(fullName);
@@ -215,10 +230,23 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         }
     }
 
+    private void updateProfilePicture() {
+        final ProfilePictureTask profilePictureTask = new ProfilePictureTask(getApplicationContext());
+        // Downloads and updates profile picture
+        profilePictureTask.execute(UserSession.getFacebookId());
+    }
+
+    private void redrawProfilePicture() {
+        final Bitmap profile = ProfilePictureUtil.loadImageFromStorage(getApplicationContext());
+        if (profile != null) {
+            mProfilePicture.setImageBitmap(profile);
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mProfileUpdatedReceiver);
         viewStub = null;
         navigationView = null;
         mDrawerLayout = null;

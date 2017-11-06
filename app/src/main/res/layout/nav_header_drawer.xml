@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_header_height"
         android:background="@drawable/side_nav_bar"
@@ -12,11 +13,15 @@
         android:orientation="vertical"
         android:gravity="bottom">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+    <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:src="@android:drawable/sym_def_app_icon"
-            android:id="@+id/header_image"/>
+            android:id="@+id/header_image"
+            app:civ_border="false"
+            app:civ_shadow="true"
+            app:civ_shadow_radius="5"
+            app:civ_shadow_color="#212121"/>
 
     <TextView
             android:layout_width="match_parent"
@@ -24,6 +29,10 @@
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:text="Username"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:id="@+id/header_username"/>
+            android:id="@+id/header_username"
+            android:shadowColor="#212121"
+            android:shadowDx="-2"
+            android:shadowDy="2"
+            android:shadowRadius="1"/>
 
 </LinearLayout>

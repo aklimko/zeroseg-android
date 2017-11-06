@@ -3,6 +3,13 @@ package pl.adamklimko.zerosegandroid.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
+import pl.adamklimko.zerosegandroid.model.Profile;
+import pl.adamklimko.zerosegandroid.rest.ApiClient;
+import pl.adamklimko.zerosegandroid.rest.UserSession;
+import pl.adamklimko.zerosegandroid.rest.ZerosegService;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -52,5 +59,34 @@ public class ProfilePictureUtil {
         } catch (FileNotFoundException e) {
             return null;
         }
+    }
+
+    public static void getUserProfile(Context context) {
+        final ZerosegService authService = ApiClient.createServiceWithAuth(ZerosegService.class, context);
+        final Call<Profile> profileCall = authService.getProfile();
+        final Response<Profile> response;
+        try {
+            response = profileCall.execute();
+        } catch (IOException e) {
+            return;
+        }
+        final Profile profile = response.body();
+        if (profile == null) {
+            return;
+        }
+        UserSession.setProfileDataInPreferences(profile);
+        final String facebookId = profile.getFacebookId();
+        if (TextUtils.isEmpty(facebookId)) {
+            return;
+        }
+        setProfilePicture(facebookId, context);
+    }
+
+    public static void setProfilePicture(String facebookId, Context context) {
+        final Bitmap profilePicture = ProfilePictureUtil.getProfilePicture(facebookId);
+        if (profilePicture == null) {
+            return;
+        }
+        ProfilePictureUtil.saveProfilePicture(profilePicture, context);
     }
 }

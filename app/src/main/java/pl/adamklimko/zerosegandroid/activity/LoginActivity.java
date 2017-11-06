@@ -220,48 +220,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 Log.i("LOGIN", "Successful login");
                 UserSession.setTokenInPreferences(token);
-                getUserProfile();
+                ProfilePictureUtil.getUserProfile(getApplicationContext());
                 return true;
             } else if (response.code() == 403) {
                 Log.e("LOGIN", "Bad credentials");
             }
             return false;
-        }
-
-        private void getUserProfile() {
-            final ZerosegService authService = ApiClient.createServiceWithAuth(ZerosegService.class, getApplicationContext());
-            final Call<Profile> profileCall = authService.getProfile();
-            final Response<Profile> response;
-            try {
-                response = profileCall.execute();
-            } catch (NoNetworkConnectedException e) {
-                noNetworkConnection = true;
-                return;
-            } catch (SocketTimeoutException e) {
-                noInternetConnection = true;
-                return;
-            } catch (IOException e) {
-                return;
-            }
-            final Profile profile = response.body();
-            if (profile == null) {
-                return;
-            }
-            UserSession.setProfileDataInPreferences(profile);
-            final String facebookId = profile.getFacebookId();
-            if (TextUtils.isEmpty(facebookId)) {
-                return;
-            }
-            setProfilePicture(facebookId);
-        }
-
-        private void setProfilePicture(String facebookId) {
-            final Bitmap profilePicture = ProfilePictureUtil.getProfilePicture(facebookId);
-            if (profilePicture == null) {
-                return;
-            }
-            ProfilePictureUtil.saveProfilePicture(profilePicture, getApplicationContext());
-//            UserSession.setProfilePicture(profilePicture);
         }
 
         @Override
