@@ -1,6 +1,9 @@
 *.iml
+*.apk
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
 /build
+.idea
+/app/libs/
+/app/build/
+/app/proguard-rules.pro
