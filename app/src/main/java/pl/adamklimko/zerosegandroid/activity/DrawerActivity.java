@@ -25,6 +25,7 @@ import pl.adamklimko.zerosegandroid.fragment.ConfigurationFragment;
 import pl.adamklimko.zerosegandroid.fragment.MessageFragment;
 import pl.adamklimko.zerosegandroid.rest.ProfilePictureTask;
 import pl.adamklimko.zerosegandroid.rest.UserSession;
+import pl.adamklimko.zerosegandroid.util.KeyboardUtil;
 import pl.adamklimko.zerosegandroid.util.ProfilePictureUtil;
 
 public abstract class DrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -86,6 +87,16 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, 0, 0);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                if (KeyboardUtil.isKeyboardOpen(mDrawerLayout)) {
+                    KeyboardUtil.hideKeyboard(DrawerActivity.this);
+                }
+                super.onDrawerOpened(drawerView);
+            }
+        });
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
