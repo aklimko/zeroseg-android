@@ -186,6 +186,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
             case R.id.nav_logout:
                 switchToLoginActivity();
                 UserSession.resetSession();
+                unregisterReceivers();
                 Toast.makeText(getApplicationContext(), "Successful logout", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -207,6 +208,11 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
         final Intent login = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(login);
         finish();
+    }
+
+    private void unregisterReceivers() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mProfileUpdatedReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mNewProfilePictureSaved);
     }
 
     private void uncheckAllCheckedMenuItems() {
@@ -257,7 +263,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mProfileUpdatedReceiver);
+        unregisterReceivers();
         viewStub = null;
         navigationView = null;
         mDrawerLayout = null;
